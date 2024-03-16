@@ -21,21 +21,23 @@ if __name__ == "__main__":
         
         start = time.perf_counter()
         
-        # RAG Treatment
         # 1 - Read the pdf content
         pdf = document(args["pdf"])
         pdf.getContentFromPDF()
         print("Text length : {}".format(len(pdf.content)))
         print("PDF to TEXT conversion -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
+        
         # 2 - Chunk document
         if (len(pdf.content) > 0):
             nb, chunks = pdf.chunk(args["separator"], args["chunk_size"], args["chunk_overlap"])
         print("Number of chunks : {}".format(nb))
         print("Chunking -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
+        
         # 3 - Text embeddings
         embds = embeddings()
         vPrompt = embds.createEmbeddingsFromTXT(args["prompt"])
         print("Create embeddings from prompt -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
+        
         # 4 - Chunks embeddings
         vChunks = embds.createEmbeddingsFromJSON(chunks)
         print("Create embeddings from chunks -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
@@ -45,6 +47,7 @@ if __name__ == "__main__":
         vtText = myfaiss.loadText(vPrompt)
         similars = myfaiss.getNearest(vtText, 3)
         print("Similarity Search -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
+        
         # 5 - Build prompt
         promptTemplate = "Question: {prompt}\n please answer the question based on the informations listed below: info0: {info0}\ninfo1: {info1}\ninfo2: {info2}"
         prompt = promptTemplate.format(prompt=args["prompt"],
@@ -52,6 +55,7 @@ if __name__ == "__main__":
                                        info1=similars["chunk"][1],
                                        info2=similars["chunk"][2])
         print("Prompt build -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
+        
         # 6 - Ask to the LLM ...
         myllm = llm()
         resp = myllm.prompt(args["urlbase"], args["model"], prompt, args["temperature"])
