@@ -1,7 +1,7 @@
 import argparse
 import time
 from datetime import timedelta
-from pdfDocument import pdfDocument
+from document import document
 from similaritySearch import similaritySearch
 from embeddings import embeddings
 from llm import llm
@@ -23,7 +23,7 @@ if __name__ == "__main__":
         
         # RAG Treatment
         # 1 - Read the pdf content
-        pdf = pdfDocument(args["pdf"])
+        pdf = document(args["pdf"])
         pdf.getContentFromPDF()
         print("Text length : {}".format(len(pdf.content)))
         print("PDF to TEXT conversion -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))

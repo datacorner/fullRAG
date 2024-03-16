@@ -11,6 +11,7 @@ class embeddings:
             answer["vector"] = vector
             return answer
         except Exception as e:
+            print(e)
             return {}
 
     def createEmbeddingsFromJSON(self, jsonChunks):
@@ -27,4 +28,5 @@ class embeddings:
                 jsonOutput[i] = line
             return jsonOutput
         except Exception as e:
+            print(e)
             return {}

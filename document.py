@@ -1,7 +1,7 @@
 import fitz # pip install PyMuPDF
 from langchain.text_splitter import CharacterTextSplitter
 
-class pdfDocument:
+class document:
     def __init__(self, __filepath):
         self.__filepath = __filepath
         self.__content = ""
@@ -44,4 +44,5 @@ class pdfDocument:
             jsonInputs["chunks"] = [ x.page_content for x in docs ] 
             return nbChunks, jsonInputs
         except Exception as e:
+            print(e)
             return -1, {}
