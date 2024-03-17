@@ -6,6 +6,9 @@ from similaritySearch import similaritySearch
 from embeddingsFactory import embeddingsFactory
 from llm import llm
 
+def trace(text):
+    print("[{}] {}".format(str(timedelta(seconds=time.perf_counter() - start)), text))
+
 if __name__ == "__main__":
     try:
         parser = argparse.ArgumentParser()
@@ -24,22 +27,21 @@ if __name__ == "__main__":
         # 1 - Read the pdf content
         pdf = document(args["pdf"])
         pdf.getContentFromPDF()
-        print("Text length : {}".format(len(pdf.content)))
-        print("PDF to TEXT conversion -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
+        trace("Text length : {}".format(len(pdf.content)))
+        trace("PDF converted to TEXT successfully")
         
         # 2 - Chunk document
         if (len(pdf.content) > 0):
             nb, chunks = pdf.chunk(args["separator"], args["chunk_size"], args["chunk_overlap"])
-        print("Number of chunks : {}".format(nb))
-        print("Chunking -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
+        trace("Document chunked successfully, Number of chunks : {}".format(nb))
         
         # 3 - Text embeddings
         vPrompt = embeddingsFactory.createEmbeddingsFromTXT(args["prompt"])
-        print("Create embeddings from prompt -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
+        trace("Embeddings created from prompt successfully")
         
         # 4 - Chunks embeddings
         vChunks = embeddingsFactory.createEmbeddingsFromJSON(chunks)
-        print("Create embeddings from chunks -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
+        trace("Embeddings created from chunks successfully")
         
         # 5 - Similarity Search
         myfaiss = similaritySearch()
@@ -47,7 +49,7 @@ if __name__ == "__main__":
         myfaiss.buildIndexFlatL2()
         vtText = myfaiss.loadText(vPrompt)
         similars = myfaiss.getNearest(vtText, 3)
-        print("Similarity Search -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
+        trace("Similarity Search executed successfully")
         
         # 6 - Build prompt
         promptTemplate = "Question: {prompt}\n please answer the question based on the informations listed below: info0: {info0}\ninfo1: {info1}\ninfo2: {info2}"
@@ -55,13 +57,12 @@ if __name__ == "__main__":
                                        info0=similars["chunk"][0],
                                        info1=similars["chunk"][1],
                                        info2=similars["chunk"][2])
-        print("Prompt build -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
+        trace("Prompt built successfully")
         
         # 7 - Ask to the LLM ...
         myllm = llm()
         resp = myllm.prompt(args["urlbase"], args["model"], prompt, args["temperature"])
-        print("<RESPONSE>\n {}\n<END OF RESPONSE>".format(resp))
-        print("LLM Q&A : {}".format(str(timedelta(seconds=time.perf_counter() - start))))
+        trace("LLM Reponse\n {}\n".format(resp))
     
     except Exception as e:
         print(e)

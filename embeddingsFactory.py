@@ -1,8 +1,9 @@
 from sentence_transformers import SentenceTransformer
 import pandas as pd
 
+
 class embeddingsFactory:
-       
+    
     @staticmethod
     def createEmbeddingsFromTXT(text):
         try: 
