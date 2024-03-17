@@ -14,7 +14,7 @@ class similaritySearch:
 
     def loadText(self, text):
         # Get source data and JSON -> DF
-        vect = np.asarray(text["vector"])
+        vect = np.asarray(text[0]["vector"])
         vect = np.array([vect]).astype(np.float32)
         faiss.normalize_L2(vect)
         return vect

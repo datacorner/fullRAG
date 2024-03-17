@@ -1,20 +1,21 @@
 from sentence_transformers import SentenceTransformer
 import pandas as pd
 
-class embeddings:
-    def createEmbeddingsFromTXT(self, text):
+class embeddingsFactory:
+       
+    @staticmethod
+    def createEmbeddingsFromTXT(text):
         try: 
-            encoder = SentenceTransformer("paraphrase-mpnet-base-v2")
-            vector = encoder.encode(text)
-            answer = {}
-            answer["text"] = text
-            answer["vector"] = vector
+            jsonInputs = {}
+            jsonInputs["chunks"] = [text]
+            answer = embeddingsFactory.createEmbeddingsFromJSON(jsonInputs)
             return answer
         except Exception as e:
             print(e)
             return {}
-
-    def createEmbeddingsFromJSON(self, jsonChunks):
+    
+    @staticmethod
+    def createEmbeddingsFromJSON(jsonChunks):
         try: 
             dfInput = pd.DataFrame(jsonChunks["chunks"], columns=["chunks"])
             encoder = SentenceTransformer("paraphrase-mpnet-base-v2")

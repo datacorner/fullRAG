@@ -3,7 +3,7 @@ import time
 from datetime import timedelta
 from document import document
 from similaritySearch import similaritySearch
-from embeddings import embeddings
+from embeddingsFactory import embeddingsFactory
 from llm import llm
 
 if __name__ == "__main__":
@@ -34,13 +34,14 @@ if __name__ == "__main__":
         print("Chunking -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
         
         # 3 - Text embeddings
-        embds = embeddings()
-        vPrompt = embds.createEmbeddingsFromTXT(args["prompt"])
+        vPrompt = embeddingsFactory.createEmbeddingsFromTXT(args["prompt"])
         print("Create embeddings from prompt -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
         
         # 4 - Chunks embeddings
-        vChunks = embds.createEmbeddingsFromJSON(chunks)
+        vChunks = embeddingsFactory.createEmbeddingsFromJSON(chunks)
         print("Create embeddings from chunks -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
+        
+        # 5 - Similarity Search
         myfaiss = similaritySearch()
         myfaiss.loadChunks(vChunks)
         myfaiss.buildIndexFlatL2()
@@ -48,7 +49,7 @@ if __name__ == "__main__":
         similars = myfaiss.getNearest(vtText, 3)
         print("Similarity Search -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
         
-        # 5 - Build prompt
+        # 6 - Build prompt
         promptTemplate = "Question: {prompt}\n please answer the question based on the informations listed below: info0: {info0}\ninfo1: {info1}\ninfo2: {info2}"
         prompt = promptTemplate.format(prompt=args["prompt"],
                                        info0=similars["chunk"][0],
@@ -56,7 +57,7 @@ if __name__ == "__main__":
                                        info2=similars["chunk"][2])
         print("Prompt build -> {}".format(str(timedelta(seconds=time.perf_counter() - start))))
         
-        # 6 - Ask to the LLM ...
+        # 7 - Ask to the LLM ...
         myllm = llm()
         resp = myllm.prompt(args["urlbase"], args["model"], prompt, args["temperature"])
         print("<RESPONSE>\n {}\n<END OF RESPONSE>".format(resp))
