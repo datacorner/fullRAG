@@ -42,6 +42,7 @@ class document:
             nbChunks = len(docs)
             jsonInputs = {}
             jsonInputs["chunks"] = [ x.page_content for x in docs ] 
+            # return a JSON like this : {'chunks': ['Transcript of ...', ...] }
             return nbChunks, jsonInputs
         except Exception as e:
             print(e)

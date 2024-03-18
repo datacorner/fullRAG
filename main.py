@@ -36,10 +36,13 @@ if __name__ == "__main__":
         trace("Document chunked successfully, Number of chunks : {}".format(nb))
         
         # 3 - Text embeddings
+        #emb = embeddingsFactory("http://localhost:11434/api", "nomic-embed-text")
+        #vPrompt = emb.createFromTXT(args["prompt"])
         vPrompt = embeddingsFactory.createEmbeddingsFromTXT(args["prompt"])
         trace("Embeddings created from prompt successfully")
         
         # 4 - Chunks embeddings
+        #vChunks = emb.createFromJSON(chunks)
         vChunks = embeddingsFactory.createEmbeddingsFromJSON(chunks)
         trace("Embeddings created from chunks successfully")
         
@@ -54,9 +57,9 @@ if __name__ == "__main__":
         # 6 - Build prompt
         promptTemplate = "Question: {prompt}\n please answer the question based on the informations listed below: info0: {info0}\ninfo1: {info1}\ninfo2: {info2}"
         prompt = promptTemplate.format(prompt=args["prompt"],
-                                       info0=similars["chunk"][0],
-                                       info1=similars["chunk"][1],
-                                       info2=similars["chunk"][2])
+                                       info0=similars["text"][0],
+                                       info1=similars["text"][1],
+                                       info2=similars["text"][2])
         trace("Prompt built successfully")
         
         # 7 - Ask to the LLM ...

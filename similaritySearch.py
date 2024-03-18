@@ -14,7 +14,7 @@ class similaritySearch:
 
     def loadText(self, text):
         # Get source data and JSON -> DF
-        vect = np.asarray(text[0]["vector"])
+        vect = np.asarray(text[0]["embedding"])
         vect = np.array([vect]).astype(np.float32)
         faiss.normalize_L2(vect)
         return vect
@@ -29,7 +29,7 @@ class similaritySearch:
 
     def buildIndexFlatL2(self):
         # Build a FAISS index from the vectors
-        vout =  np.asarray([ np.asarray(v) for v in self.dfContent["vector"] ])
+        vout =  np.asarray([ np.asarray(v) for v in self.dfContent["embedding"] ])
         vout = vout.astype(np.float32) # Only support ndarray in 32 bits
         faiss.normalize_L2(vout)
         self.index = faiss.IndexFlatL2(vout.shape[1])
