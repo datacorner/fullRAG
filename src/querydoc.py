@@ -2,9 +2,9 @@ import argparse
 import time
 from datetime import timedelta
 from document import document
-from similaritySearch import similaritySearch
+from similaritySearchEngine import similaritySearchEngine
 from embeddingsFactory import embeddingsFactory
-from llm import llm
+from ollamaWrapper import ollamaWrapper
 
 def trace(text):
     print("[{}] {}".format(str(timedelta(seconds=time.perf_counter() - start)), text))
@@ -18,8 +18,8 @@ if __name__ == "__main__":
         parser.add_argument("-chunk_size", help="Chunk Size", required=False, default=500)
         parser.add_argument("-chunk_overlap", help="Chunk Overlap", required=False, default=50)
         parser.add_argument("-separator", help="Separator", required=False, default=".")
-        parser.add_argument("-model", help="Ollama Model", required=False, default="tinydolphin")
-        parser.add_argument("-urlbase", help="URL for OLLAMA (default localhost)", required=False, default="http://localhost:11434/api")
+        parser.add_argument("-model", help="Ollama Model installed", required=False, default="tinydolphin")
+        parser.add_argument("-urlbase", help="URL for Ollama API (default localhost)", required=False, default="http://localhost:11434/api")
         args = vars(parser.parse_args())
         
         start = time.perf_counter()
@@ -27,31 +27,29 @@ if __name__ == "__main__":
         # 1 - Read the pdf content
         pdf = document(args["pdf"])
         pdf.getContentFromPDF()
-        trace("Text length : {}".format(len(pdf.content)))
-        trace("PDF converted to TEXT successfully")
+        if (len(pdf.content) < 0):
+            raise Exception("Error while converting the PDF document to text")
+        trace("PDF converted to TEXT successfully. Text length : {}".format(len(pdf.content)))
         
         # 2 - Chunk document
-        if (len(pdf.content) > 0):
-            nb, chunks = pdf.chunk(args["separator"], args["chunk_size"], args["chunk_overlap"])
+        nb, chunks = pdf.chunk(args["separator"], args["chunk_size"], args["chunk_overlap"])
+        if (nb<0):
+            raise Exception("Error while chunking the document")
         trace("Document chunked successfully, Number of chunks : {}".format(nb))
         
         # 3 - Text embeddings
-        #emb = embeddingsFactory("http://localhost:11434/api", "nomic-embed-text")
-        #vPrompt = emb.createFromTXT(args["prompt"])
         vPrompt = embeddingsFactory.createEmbeddingsFromTXT(args["prompt"])
         trace("Embeddings created from prompt successfully")
         
         # 4 - Chunks embeddings
-        #vChunks = emb.createFromJSON(chunks)
         vChunks = embeddingsFactory.createEmbeddingsFromJSON(chunks)
         trace("Embeddings created from chunks successfully")
         
         # 5 - Similarity Search
-        myfaiss = similaritySearch()
-        myfaiss.loadChunks(vChunks)
-        myfaiss.buildIndexFlatL2()
-        vtText = myfaiss.loadText(vPrompt)
-        similars = myfaiss.getNearest(vtText, 3)
+        myfaiss = similaritySearchEngine()
+        myfaiss.addToIndex(vChunks)
+        #myfaiss.read(name="ma_sauvegarde")
+        similars = myfaiss.getNearest(vPrompt, 3)
         trace("Similarity Search executed successfully")
         
         # 6 - Build prompt
@@ -63,8 +61,8 @@ if __name__ == "__main__":
         trace("Prompt built successfully")
         
         # 7 - Ask to the LLM ...
-        myllm = llm()
-        resp = myllm.prompt(args["urlbase"], args["model"], prompt, args["temperature"])
+        myllm = ollamaWrapper(args["urlbase"], args["model"], args["temperature"])
+        resp = myllm.prompt(prompt)
         trace("LLM Reponse\n {}\n".format(resp))
     
     except Exception as e:

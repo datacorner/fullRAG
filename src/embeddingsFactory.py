@@ -29,7 +29,6 @@ class embeddingsFactory:
                 return final
             else:
                 raise Exception("Error while reaching out the Web Service: {}", str(response.status_code, response.text))
-            
         except Exception as e:
             print(e)
             return {}
