@@ -11,7 +11,7 @@ class embeddingsFactory:
         self.__model = model
         self.__urlbase = urlbase
         
-    def createFromTXT(self, text):
+    def createFromOllama(self, text):
         try: 
             url = self.__urlbase + "/embeddings"
             params = {"model": self.__model,
@@ -49,8 +49,8 @@ class embeddingsFactory:
         try: 
             jsonInputs = {}
             jsonInputs["chunks"] = [text]
-            answer = embeddingsFactory.createEmbeddingsFromJSON(jsonInputs)
-            return answer
+            textAndEmbedding = embeddingsFactory.createEmbeddingsFromJSON(jsonInputs)
+            return textAndEmbedding
         except Exception as e:
             print(e)
             return {}
@@ -62,13 +62,13 @@ class embeddingsFactory:
             encoder = SentenceTransformer("paraphrase-mpnet-base-v2")
             vect = encoder.encode(dfInput["chunks"])
             vectAndData = zip(dfInput["chunks"], vect)
-            jsonOutput = {}
+            textAndEmbeddings = {}
             for i, (chunk, vector) in enumerate(vectAndData):
                 line = {}
                 line["text"] = chunk
                 line["embedding"] = vector
-                jsonOutput[i] = line
-            return jsonOutput
+                textAndEmbeddings[i] = line
+            return textAndEmbeddings
         except Exception as e:
             print(e)
             return {}

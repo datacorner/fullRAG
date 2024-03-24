@@ -5,6 +5,7 @@ from document import document
 from similaritySearchEngine import similaritySearchEngine
 from embeddingsFactory import embeddingsFactory
 from ollamaWrapper import ollamaWrapper
+from prompt import prompt
 
 def trace(text):
     print("[{}] {}".format(str(timedelta(seconds=time.perf_counter() - start)), text))
@@ -39,10 +40,14 @@ if __name__ == "__main__":
         
         # 3 - Text embeddings
         vPrompt = embeddingsFactory.createEmbeddingsFromTXT(args["prompt"])
+        if (vPrompt == {}):
+            raise Exception("Error while creating the prompt embeddings")
         trace("Embeddings created from prompt successfully")
         
         # 4 - Chunks embeddings
         vChunks = embeddingsFactory.createEmbeddingsFromJSON(chunks)
+        if (vChunks == {}):
+            raise Exception("Error while creating the chunks embeddings")
         trace("Embeddings created from chunks successfully")
         
         # 5 - Similarity Search
@@ -52,16 +57,15 @@ if __name__ == "__main__":
         trace("Similarity Search executed successfully")
         
         # 6 - Build prompt
-        promptTemplate = "Question: {prompt}\n please answer the question based on the informations listed below: info0: {info0}\ninfo1: {info1}\ninfo2: {info2}"
-        prompt = promptTemplate.format(prompt=args["prompt"],
-                                       info0=similars["text"][0],
-                                       info1=similars["text"][1],
-                                       info2=similars["text"][2])
+        myPrompt = prompt(args["prompt"], similars["text"])
+        customPrompt = myPrompt.build()
+        if (len(customPrompt) == 0):
+            raise Exception("Error while creating the prompt")
         trace("Prompt built successfully")
         
         # 7 - Ask to the LLM ...
         myllm = ollamaWrapper(args["urlbase"], args["model"], args["temperature"])
-        resp = myllm.prompt(prompt)
+        resp = myllm.prompt(customPrompt)
         trace("LLM Reponse\n {}\n".format(resp))
     
     except Exception as e:
