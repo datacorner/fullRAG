@@ -48,7 +48,6 @@ if __name__ == "__main__":
         # 5 - Similarity Search
         myfaiss = similaritySearchEngine()
         myfaiss.addToIndex(vChunks)
-        #myfaiss.read(name="ma_sauvegarde")
         similars = myfaiss.getNearest(vPrompt, 3)
         trace("Similarity Search executed successfully")
         
