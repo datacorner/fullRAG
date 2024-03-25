@@ -4,48 +4,21 @@ import requests
 import json
 import numpy as np
 
+EMBEDDING_MODEL = "paraphrase-mpnet-base-v2"
 # ollama pull nomic-embed-text
 
 class embeddingsFactory:
-    def __init__(self, urlbase, model):
-        self.__model = model
-        self.__urlbase = urlbase
-        
-    def createFromOllama(self, text):
-        try: 
-            url = self.__urlbase + "/embeddings"
-            params = {"model": self.__model,
-                      "prompt": text,
-                      "keep_alive": 15}
-            response = requests.post(url, json=params)
-            if (response.status_code == 200):
-                response_text = response.text
-                data = json.loads(response_text)
-                # returns a vector like this: {"embedding":[-1.5624014139175415,0.9712358713150024, ...]}
-                final = {}
-                final["text"] = text
-                final["embedding"] = data["embedding"]
-                # Build a vector like this: {'text': 'How many jobs Joe Biden wants to create ?', 'embedding': [-1.5624014139175415,  ...]}
-                return final
-            else:
-                raise Exception("Error while reaching out the Web Service: {}", str(response.status_code, response.text))
-        except Exception as e:
-            print(e)
-            return {}
+    def __init__(self):
+        try:
+            self.__encoder = SentenceTransformer(EMBEDDING_MODEL)
+        except:
+            self.__encoder = None
 
-    def createFromJSON(self, chunks):
-        try: 
-            final = []
-            for chunk in chunks["chunks"]:
-                final.append(self.createFromTXT(chunk))
-            return final
-        
-        except Exception as e:
-            print(e)
-            return {}
+    @property
+    def encoder(self):
+        return self.__encoder
 
-    @staticmethod
-    def createEmbeddingsFromTXT(text):
+    def createEmbeddingsFromTXT(self, text):
         try: 
             jsonInputs = {}
             jsonInputs["chunks"] = [text]
@@ -55,12 +28,12 @@ class embeddingsFactory:
             print(e)
             return {}
     
-    @staticmethod
-    def createEmbeddingsFromJSON(jsonChunks):
+    def createEmbeddingsFromJSON(self, jsonChunks):
         try: 
+            if (self.encoder == None):
+                raise Exception ("Encoder not initialized")
             dfInput = pd.DataFrame(jsonChunks["chunks"], columns=["chunks"])
-            encoder = SentenceTransformer("paraphrase-mpnet-base-v2")
-            vect = encoder.encode(dfInput["chunks"])
+            vect = self.encoder.encode(dfInput["chunks"])
             vectAndData = zip(dfInput["chunks"], vect)
             textAndEmbeddings = {}
             for i, (chunk, vector) in enumerate(vectAndData):

@@ -39,13 +39,14 @@ if __name__ == "__main__":
         trace("Document chunked successfully, Number of chunks : {}".format(nb))
         
         # 3 - Text embeddings
-        vPrompt = embeddingsFactory.createEmbeddingsFromTXT(args["prompt"])
+        embFactory = embeddingsFactory()
+        vPrompt = embFactory.createEmbeddingsFromTXT(args["prompt"])
         if (vPrompt == {}):
             raise Exception("Error while creating the prompt embeddings")
         trace("Embeddings created from prompt successfully")
         
         # 4 - Chunks embeddings
-        vChunks = embeddingsFactory.createEmbeddingsFromJSON(chunks)
+        vChunks = embFactory.createEmbeddingsFromJSON(chunks)
         if (vChunks == {}):
             raise Exception("Error while creating the chunks embeddings")
         trace("Embeddings created from chunks successfully")
