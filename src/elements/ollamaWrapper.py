@@ -23,7 +23,7 @@ class ollamaWrapper:
             params = {"model": self.model,
                       "prompt": prompt, 
                       "stream": False,
-                      "temperature": float(self.temperature.replace(",", "."))}
+                      "temperature": self.temperature}
             response = requests.post(url, json=params)
             if (response.status_code == 200):
                 response_text = response.text

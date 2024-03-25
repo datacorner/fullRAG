@@ -1,0 +1,41 @@
+[project]
+name = "FullRag"
+version = "0.1.0"
+authors = [
+  { name="Benoit Cayla", email="benoit@datacorner.fr" },
+]
+description = "This solution manages a full RAG by using FAISS, Ollama and sentence_transformers for embeddings."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+classifiers = [
+  # How mature is this project? Common values are
+  #   3 - Alpha
+  #   4 - Beta
+  #   5 - Production/Stable
+    "Development Status :: 3 - Alpha",
+    "Operating System :: OS Independent",
+    "Environment :: Console",
+    "Programming Language :: Python :: 3.10",
+]
+dependencies = [
+"pandas==2.2.1",
+"PyMuPDF==1.24.0",
+"langchain==0.1.13",
+"sentence-transformers==2.6.0",
+"faiss-cpu==1.8.0",
+]
+
+[project.scripts]
+RagQueryDoc = "RagQueryDoc:main"
+RagQueryIndex = "RagQueryIndex:main"
+RagStoreDoc = "RagStoreDoc:main"
+
+[tool.setuptools]
+package-data = { pidg = ["config-samples/bplogs.sql" ] }
+
+[build-system]
+# These are the assumed default build requirements from pip:
+# https://pip.pypa.io/en/stable/reference/pip/#pep-517-and-518-support
+requires = ["setuptools>=43.0.0", "wheel"]
+build-backend = "setuptools.build_meta"

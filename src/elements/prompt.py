@@ -1,4 +1,3 @@
-
 PROMPT_TEMPLATE = "Question: {prompt}\n \
 Please answer the question based on the informations listed below: \
 {context}"
