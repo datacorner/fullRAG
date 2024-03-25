@@ -27,6 +27,13 @@ def textEmbeddings(trace, embFactory, prompt):
     trace.add("PTEMBEDDGS", "Embeddings created from prompt successfully")
     return vPrompt
 
+def chunkEmbeddings(trace, embFactory, chunks):
+    vChunks = embFactory.createEmbeddingsFromList(chunks)
+    if (vChunks == {}):
+        raise Exception("Error while creating the chunks embeddings")
+    trace.add("DOCEMBEDDGS", "Embeddings created from chunks successfully")
+    return vChunks
+
 def FAISSaddToIndex(trace, myfaiss, vChunks):
     myfaiss.addToIndex(vChunks)
     trace.add("ADDTOINDEX", "Add chunks to the FAISS Index")
@@ -46,13 +53,6 @@ def FAISSStore(trace, vChunks, path, name):
 def FAISSLoad(trace, myfaiss, path, name):
     trace.add("FAISSSTORE", "Chunks embeddings indexed and stored successfully")
     myfaiss.load(path, name)
-
-def chunkEmbeddings(trace, embFactory, chunks):
-    vChunks = embFactory.createEmbeddingsFromJSON(chunks)
-    if (vChunks == {}):
-        raise Exception("Error while creating the chunks embeddings")
-    trace.add("DOCEMBEDDGS", "Embeddings created from chunks successfully")
-    return vChunks
 
 def buildPrompt(trace, question, similarText):
     myPrompt = prompt(question, similarText)

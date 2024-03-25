@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import faiss # pip install faiss-cpu (https://pypi.org/project/faiss-cpu/)
 import pickle
+import os
 
 """ 
     Leverage Meta FAISS
@@ -17,8 +18,8 @@ class similaritySearchEngine:
             filepath (str, optional): _description_. Defaults to "./backup/".
             name (str, optional): _description_. Defaults to "faissbackup".
         """
-        datafile = filepath + name + ".data"
-        indexfile = filepath + name + ".index"
+        datafile = os.path.join(filepath, name + ".data")
+        indexfile = os.path.join(filepath, name + ".index")
         with open(datafile, "wb") as f:
             pickle.dump(self.dfContent, f)
         faiss.write_index(self.index, indexfile)
@@ -30,8 +31,8 @@ class similaritySearchEngine:
             filepath (str, optional): _description_. Defaults to "./backup/".
             name (str, optional): _description_. Defaults to "faissbackup".
         """
-        datafile = filepath + name + ".data"
-        indexfile = filepath + name + ".index"
+        datafile = os.path.join(filepath, name + ".data")
+        indexfile = os.path.join(filepath, name + ".index")
         with open(datafile, "rb") as f:
             self.dfContent = pickle.load(f)
         self.index = faiss.read_index(indexfile)

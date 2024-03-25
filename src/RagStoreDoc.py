@@ -38,6 +38,7 @@ if __name__ == "__main__":
 
         myTrace.stop()
         wrapTrace(myTrace.getFullJSON())
+        wrapResponse("SUCCESS")
         
     except Exception as e:
         wrapResponse("ERROR")

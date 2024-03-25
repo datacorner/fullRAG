@@ -32,13 +32,13 @@ class embeddingsFactory:
         try: 
             jsonInputs = {}
             jsonInputs["chunks"] = [text]
-            textAndEmbedding = self.createEmbeddingsFromJSON(jsonInputs)
+            textAndEmbedding = self.createEmbeddingsFromList(jsonInputs)
             return textAndEmbedding
         except Exception as e:
             print(e)
             return {}
 
-    def createEmbeddingsFromJSON(self, jsonChunks):
+    def createEmbeddingsFromList(self, jsonChunks):
         try: 
             if (self.encoder == None):
                 raise Exception ("Encoder not initialized")
