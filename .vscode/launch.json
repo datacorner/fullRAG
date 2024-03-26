@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "RAG (Biden) - PDF Query",
+            "name": "RAG - PDF Query",
             "type": "debugpy",
             "request": "launch",
             "program": "src/RagQueryDoc.py",
@@ -14,7 +14,7 @@
                        "-pdf", "data/Following is a transcript of President Biden.pdf"]
         },
         {
-            "name": "RAG (Biden) - Build index",
+            "name": "RAG - Build index",
             "type": "debugpy",
             "request": "launch",
             "program": "src/RagStoreDoc.py",
@@ -24,7 +24,7 @@
                        "-pdf", "data/Following is a transcript of President Biden.pdf"]
         },
         {
-            "name": "RAG (Biden) - Query Index",
+            "name": "RAG - Query Index",
             "type": "debugpy",
             "request": "launch",
             "program": "src/RagQueryIndex.py",
@@ -32,6 +32,24 @@
             "args":  [ "-faissname", "biden",
                        "-path", "./vstore/",
                        "-prompt", "How many jobs Joe Biden wants to create ?"]
+        },
+        {
+            "name": "PDF 2 TXT",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/RagPdf2Text.py",
+            "console": "integratedTerminal",
+            "args":  [ "-pdf", "data/Following is a transcript of President Biden.pdf",
+                       "-txt", "data/Following is a transcript of President Biden.txt"]
+        },
+        {
+            "name": "Chunking",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/RagChunkText.py",
+            "console": "integratedTerminal",
+            "args":  [ "-out", "data/chunks.json",
+                       "-txt", "data/Following is a transcript of President Biden.txt"]
         }
     ]
 }

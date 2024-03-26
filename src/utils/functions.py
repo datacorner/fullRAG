@@ -2,6 +2,7 @@ from elements.document import document
 from elements.similaritySearchEngine import similaritySearchEngine
 from elements.ollamaWrapper import ollamaWrapper
 from elements.prompt import prompt
+import json
 
 def readPDF(trace, pdffile):
     # Read the pdf content
@@ -67,3 +68,19 @@ def promptLLM(trace, question, urlOllama, model, temperature):
     resp = myllm.prompt(question)
     trace.add("LLMPT", "LLM Reponse\n {}\n".format(resp))
     return resp
+
+def writeToFile(filename, content):
+    try:
+        with open(filename, "w") as f:
+            f.write(content)
+        return True
+    except Exception as e:
+        return False
+
+def writeJsonToFile(filename, jsonCOntent):
+    try:
+        with open(filename, "w") as f:
+            f.write(json.dumps(jsonCOntent))
+        return True
+    except Exception as e:
+        return False

@@ -3,6 +3,7 @@ from elements.embeddingsFactory import embeddingsFactory
 from utils.traceOut import traceOut
 import utils.functions as functions
 from elements.similaritySearchEngine import similaritySearchEngine
+import utils.CONST as C
 
 def wrapResponse(response):
     """ Wrap the response between 2 XML tags to avoid a mix with the command line output/errors
@@ -46,5 +47,5 @@ if __name__ == "__main__":
         wrapResponse(resp)
         
     except Exception as e:
-        wrapResponse("ERROR")
+        wrapResponse(C.OUT_ERROR)
         wrapTrace(str(e))

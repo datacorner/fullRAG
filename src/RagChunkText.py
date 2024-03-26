@@ -1,8 +1,8 @@
 import argparse
-from elements.embeddingsFactory import embeddingsFactory
 from utils.traceOut import traceOut
 import utils.functions as functions
 import utils.CONST as C
+from elements.document import document
 
 def wrapResponse(response):
     """ Wrap the response between 2 XML tags to avoid a mix with the command line output/errors
@@ -17,9 +17,8 @@ def wrapTrace(response):
 if __name__ == "__main__":
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument("-pdf", help="PDF file path", required=True)
-        parser.add_argument("-faissname", help="FAISS Index reference", required=True)
-        parser.add_argument("-path", help="Path to the FAISS Index", required=True)
+        parser.add_argument("-txt", help="Input Text file path", required=True)
+        parser.add_argument("-out", help="Output JSON file path for the chunks", required=True)
         parser.add_argument("-chunk_size", help="Chunk Size", required=False, type=int, default=500)
         parser.add_argument("-chunk_overlap", help="Chunk Overlap", required=False, type=int, default=50)
         parser.add_argument("-separator", help="Separator", required=False, default=".")
@@ -27,19 +26,21 @@ if __name__ == "__main__":
         myTrace = traceOut(args)
         myTrace.start()
 
-        # 1 - Read the pdf content
-        pdf = functions.readPDF(myTrace, args["pdf"])
-        # 2 - Chunk document
-        nb, chunks = functions.chunkContent(myTrace, pdf, args["separator"], args["chunk_size"], args["chunk_overlap"])
-        embFactory = embeddingsFactory()
-        # 3 - Chunks embeddings
-        vChunks = functions.chunkEmbeddings(myTrace, embFactory, chunks)
-        # 4 - Store embeddings in the index
-        functions.FAISSStore(myTrace, vChunks, args["path"], args["faissname"])
+        # Read the Text file first
+        nb = -1
+        doc = document(args["txt"])
+        
+        # Document chunking
+        if (doc.getContentFromTXT()):
+            nb, chunks = functions.chunkContent(myTrace, doc, args["separator"], args["chunk_size"], args["chunk_overlap"])
+    
+        # Write the json in a file 
+        if (not functions.writeJsonToFile(args["out"], chunks)):
+            raise Exception("Impossible to write the chunks in a file")
 
         myTrace.stop()
         wrapTrace(myTrace.getFullJSON())
-        wrapResponse(C.OUT_SUCCESS)
+        wrapResponse(str(nb))
         
     except Exception as e:
         wrapResponse(C.OUT_ERROR)

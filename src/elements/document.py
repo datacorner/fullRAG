@@ -14,6 +14,14 @@ class document:
     def content(self) -> str: 
         return self.__content
     
+    def getContentFromTXT(self) -> bool:
+        try:
+            with open(self.filepath, "r") as f:
+                self.__content = f.read()
+            return True
+        except Exception as e:
+            return False
+
     def getContentFromPDF(self, fromPage=0, toPage=0, heightToRemove=0) -> bool:
         try:
             reader = fitz.open(self.__filepath)
@@ -28,7 +36,6 @@ class document:
                     self.__content = self.__content + page.get_textbox(rect) # get plain text encoded as UTF-8
             return True
         except Exception as e:
-            print(e)
             return False
         
     def chunk(self, separator, chunk_size, chunk_overlap):
@@ -45,5 +52,4 @@ class document:
             # return a JSON like this : {'chunks': ['Transcript of ...', ...] }
             return nbChunks, jsonInputs
         except Exception as e:
-            print(e)
             return -1, {}
