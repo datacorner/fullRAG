@@ -4,7 +4,7 @@ import utils.functions as F
 import utils.CONST as C
 from elements.FAISSWrapper import FAISSWrapper
 
-if __name__ == "__main__":
+def main():
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument("-" + C.ARG_FAISSACTION[0], help=C.ARG_FAISSACTION[1], required=False)
@@ -18,9 +18,9 @@ if __name__ == "__main__":
         myTrace = traceOut(args)
         myTrace.start()
 
+        myfaiss = FAISSWrapper()
         if (args[C.ARG_FAISSACTION[0]] == C.ARG_FAISSACTION_VALMSEARCH):
-            # Memory search / need chunks,
-            myfaiss = FAISSWrapper()
+            # Memory search / need -> ARG_EMBEDDINGS_CK / ARG_EMBEDDINGS_PT / ARG_CHUNKS
             vChunks = F.readJsonFromFile(args[C.ARG_EMBEDDINGS_CK[0]])
             vPrompt = F.readJsonFromFile(args[C.ARG_EMBEDDINGS_PT[0]])
             F.FAISSaddToIndex(myTrace, myfaiss, vChunks)
@@ -28,11 +28,17 @@ if __name__ == "__main__":
             F.writeToFile(args[C.ARG_CHUNKS[0]], similars["text"].to_json())
 
         elif (args[C.ARG_FAISSACTION[0]] == C.ARG_FAISSACTION_VALISEARCH):
-            # Index search
-            pass
+            # Index search / need -> ARG_EMBEDDINGS_PT / ARG_FAISSNAME / ARG_FAISSPATH
+            vPrompt = F.readJsonFromFile(args[C.ARG_EMBEDDINGS_PT[0]])
+            F.FAISSLoad(myTrace, myfaiss, args[C.ARG_FAISSPATH[0]], args[C.ARG_FAISSNAME[0]])
+            similars = F.FAISSSearch(myTrace, myfaiss, args[C.ARG_NEAREST[0]], vPrompt)
+            F.writeToFile(args[C.ARG_CHUNKS[0]], similars["text"].to_json())
+
         elif (args[C.ARG_FAISSACTION[0]] == C.ARG_FAISSACTION_VALSTORE):
-            # Calculate and Store index
-            pass
+            # Calculate and Store index / need -> ARG_EMBEDDINGS_CK / ARG_FAISSNAME / ARG_FAISSPATH
+            vChunks = F.readJsonFromFile(args[C.ARG_EMBEDDINGS_CK[0]])
+            F.FAISSStore(myTrace,  vChunks,  C.ARG_FAISSPATH[0],  args[C.ARG_FAISSNAME[0]])
+
         else:
             raise Exception("No action selected, please select search or store")
 
@@ -43,3 +49,6 @@ if __name__ == "__main__":
     except Exception as e:
         F.wrapResponse(C.OUT_ERROR)
         F.wrapTrace(str(e))
+
+if __name__ == "__main__":
+    main()

@@ -31,9 +31,11 @@ dependencies = [
 RagQueryDoc = "RagQueryDoc:main"
 RagQueryIndex = "RagQueryIndex:main"
 RagStoreDoc = "RagStoreDoc:main"
-
-[tool.setuptools]
-package-data = { pidg = ["config-samples/bplogs.sql" ] }
+RagChunkText = "RagChunkText:main"
+RagEmbeddings = "RagEmbeddings:main"
+RagFaiss = "RagFaiss:main"
+RagLLM = "RagLLM:main"
+RagPdf2Text = "RagPdf2Text:main"
 
 [build-system]
 # These are the assumed default build requirements from pip:

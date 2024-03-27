@@ -10,7 +10,7 @@ def getArg(arg, name):
     except:
         return C.NULLSTRING
 
-if __name__ == "__main__":
+def main():
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument("-" + C.ARG_CHUNKS[0], help=C.ARG_CHUNKS[1], required=False, default=C.NULLSTRING)
@@ -51,3 +51,6 @@ if __name__ == "__main__":
     except Exception as e:
         F.wrapResponse(C.OUT_ERROR)
         F.wrapTrace(str(e))
+
+if __name__ == "__main__":
+    main()

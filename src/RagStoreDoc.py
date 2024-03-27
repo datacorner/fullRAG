@@ -4,7 +4,7 @@ from utils.traceOut import traceOut
 import utils.functions as F
 import utils.CONST as C
 
-if __name__ == "__main__":
+def main():
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument("-" + C.ARG_PDFFILE[0], help=C.ARG_PDFFILE[1], required=True)
@@ -20,21 +20,12 @@ if __name__ == "__main__":
         # 1 - Read the pdf content
         pdf = F.readPDF(myTrace, args[C.ARG_PDFFILE[0]])
         # 2 - Chunk document
-        nb, chunks = F.chunkContent(myTrace, 
-                                    pdf, 
-                                    args[C.ARG_SEP[0]], 
-                                    args[C.ARG_CHUNKSIZE[0]], 
-                                    args[C.ARG_CHUNKOVAP[0]])
+        nb, chunks = F.chunkContent(myTrace, pdf, args[C.ARG_SEP[0]], args[C.ARG_CHUNKSIZE[0]], args[C.ARG_CHUNKOVAP[0]])
         embFactory = embeddingsFactory()
         # 3 - Chunks embeddings
-        vChunks = F.chunkEmbeddings(myTrace, 
-                                    embFactory, 
-                                    chunks)
+        vChunks = F.chunkEmbeddings(myTrace, embFactory, chunks)
         # 4 - Store embeddings in the index
-        F.FAISSStore(myTrace, 
-                     vChunks, 
-                     C.ARG_FAISSPATH[0], 
-                     args[C.ARG_FAISSNAME[0]])
+        F.FAISSStore(myTrace,  vChunks,  C.ARG_FAISSPATH[0],  args[C.ARG_FAISSNAME[0]])
 
         myTrace.stop()
         F.wrapTrace(myTrace.getFullJSON())
@@ -43,3 +34,6 @@ if __name__ == "__main__":
     except Exception as e:
         F.wrapResponse(C.OUT_ERROR)
         F.wrapTrace(str(e))
+
+if __name__ == "__main__":
+    main()

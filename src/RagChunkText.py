@@ -4,7 +4,7 @@ import utils.functions as F
 import utils.CONST as C
 from elements.document import document
 
-if __name__ == "__main__":
+def main():
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument("-" + C.ARG_TXTFILE[0], help=C.ARG_TXTFILE[1], required=True)
@@ -40,3 +40,6 @@ if __name__ == "__main__":
     except Exception as e:
         F.wrapResponse(C.OUT_ERROR)
         F.wrapTrace(str(e))
+
+if __name__ == "__main__":
+    main()
