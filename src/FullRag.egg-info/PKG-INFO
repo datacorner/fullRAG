@@ -1,0 +1,61 @@
+Metadata-Version: 2.1
+Name: FullRag
+Version: 0.1.0
+Summary: This solution manages a full RAG by using FAISS, Ollama and sentence_transformers for embeddings.
+Author-email: Benoit Cayla <benoit@datacorner.fr>
+License: MIT License
+        
+        Copyright (c) 2023 Benoît Cayla
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+        
+Classifier: Development Status :: 3 - Alpha
+Classifier: Operating System :: OS Independent
+Classifier: Environment :: Console
+Classifier: Programming Language :: Python :: 3.10
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: pandas==2.2.1
+Requires-Dist: PyMuPDF==1.24.0
+Requires-Dist: langchain==0.1.13
+Requires-Dist: sentence-transformers==2.6.0
+Requires-Dist: faiss-cpu==1.8.0
+Requires-Dist: numpyencoder==0.3.0
+
+# Description
+Full RAG implementation with FAISS (for training)
+
+# Installation
+
+## via pip (command line)
+pip install PyMuPDF  
+pip install langchain  
+pip install pandas  
+pip install sentence_transformers  
+pip install faiss-cpu  
+
+## via requirements.txt (command line)
+pip install -r requirements.txt
+
+## Build setup
+1) build/Modify the *.toml file
+2) run py -m build
+3) deploy / pyPI 
+    twine upload --verbose dist/fullRAG-0.x.x-py3-none-any.whl

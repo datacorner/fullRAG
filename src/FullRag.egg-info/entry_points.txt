@@ -1,0 +1,9 @@
+[console_scripts]
+RagChunkText = RagChunkText:main
+RagEmbeddings = RagEmbeddings:main
+RagFaiss = RagFaiss:main
+RagLLM = RagLLM:main
+RagPdf2Text = RagPdf2Text:main
+RagQueryDoc = RagQueryDoc:main
+RagQueryIndex = RagQueryIndex:main
+RagStoreDoc = RagStoreDoc:main
