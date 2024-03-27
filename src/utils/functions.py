@@ -1,8 +1,15 @@
 from elements.document import document
-from elements.similaritySearchEngine import similaritySearchEngine
+from elements.FAISSWrapper import FAISSWrapper
 from elements.ollamaWrapper import ollamaWrapper
 from elements.prompt import prompt
 import json
+import utils.CONST as C
+from numpyencoder import NumpyEncoder
+
+def wrapResponse(response):
+    print(C.TAG_O_RESPONSE + response + C.TAG_C_RESPONSE)
+def wrapTrace(response):
+    print(C.TAG_O_LOG + response + C.TAG_C_LOG)
 
 def readPDF(trace, pdffile):
     # Read the pdf content
@@ -45,7 +52,7 @@ def FAISSSearch(trace, myfaiss, k, vPrompt):
     return similars
 
 def FAISSStore(trace, vChunks, path, name):
-    myfaiss = similaritySearchEngine()
+    myfaiss = FAISSWrapper()
     myfaiss.addToIndex(vChunks)
     trace.add("FAISSSTORE", "Chunks embeddings indexed and stored successfully")
     myfaiss.save(path, name)
@@ -71,16 +78,24 @@ def promptLLM(trace, question, urlOllama, model, temperature):
 
 def writeToFile(filename, content):
     try:
-        with open(filename, "w") as f:
+        with open(filename, "w", encoding="utf-8") as f:
             f.write(content)
         return True
     except Exception as e:
         return False
 
-def writeJsonToFile(filename, jsonCOntent):
+def writeJsonToFile(filename, jsonContent):
     try:
-        with open(filename, "w") as f:
-            f.write(json.dumps(jsonCOntent))
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(json.dumps(jsonContent, cls=NumpyEncoder))
         return True
     except Exception as e:
         return False
+    
+def readJsonFromFile(filename):
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data
+    except Exception as e:
+        return {}

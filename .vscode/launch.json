@@ -20,7 +20,7 @@
             "program": "src/RagStoreDoc.py",
             "console": "integratedTerminal",
             "args":  [ "-faissname", "biden",
-                       "-path", "./vstore/",
+                       "-faisspath", "./vstore/",
                        "-pdf", "data/Following is a transcript of President Biden.pdf"]
         },
         {
@@ -30,7 +30,7 @@
             "program": "src/RagQueryIndex.py",
             "console": "integratedTerminal",
             "args":  [ "-faissname", "biden",
-                       "-path", "./vstore/",
+                       "-faisspath", "./vstore/",
                        "-prompt", "How many jobs Joe Biden wants to create ?"]
         },
         {
@@ -48,8 +48,37 @@
             "request": "launch",
             "program": "src/RagChunkText.py",
             "console": "integratedTerminal",
-            "args":  [ "-out", "data/chunks.json",
+            "args":  [ "-chunks", "data/chunks.json",
                        "-txt", "data/Following is a transcript of President Biden.txt"]
+        },
+        {
+            "name": "Embeddings (Prompt)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/RagEmbeddings.py",
+            "console": "integratedTerminal",
+            "args":  [ "-prompt", "How many jobs Joe Biden wants to create ?",
+                       "-embeddings", "data/emb_prompt.json"]
+        },
+        {
+            "name": "Embeddings (Chunks)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/RagEmbeddings.py",
+            "console": "integratedTerminal",
+            "args":  [ "-chunks", "data/chunks.json",
+                       "-embeddings", "data/emb_chunks.json"]
+        },
+        {
+            "name": "FAISS Mem Search",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/RagFaiss.py",
+            "console": "integratedTerminal",
+            "args":  [ "-action", "memsearch",
+                       "-embprompt", "data/emb_prompt.json",
+                       "-embchunks", "data/emb_chunks.json",
+                       "-chunks", "data/nearest.json"]
         }
     ]
 }

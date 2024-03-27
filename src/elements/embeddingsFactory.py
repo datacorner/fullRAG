@@ -32,10 +32,9 @@ class embeddingsFactory:
         try: 
             jsonInputs = {}
             jsonInputs["chunks"] = [text]
-            textAndEmbedding = self.createEmbeddingsFromList(jsonInputs)
-            return textAndEmbedding
+            textAndEmbeddings = self.createEmbeddingsFromList(jsonInputs)
+            return textAndEmbeddings
         except Exception as e:
-            print(e)
             return {}
 
     def createEmbeddingsFromList(self, jsonChunks):
@@ -53,5 +52,4 @@ class embeddingsFactory:
                 textAndEmbeddings[i] = line
             return textAndEmbeddings
         except Exception as e:
-            print(e)
             return {}

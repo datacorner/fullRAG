@@ -1,59 +1,49 @@
 import argparse
 from elements.embeddingsFactory import embeddingsFactory
 from utils.traceOut import traceOut
-import utils.functions as functions
-from elements.similaritySearchEngine import similaritySearchEngine
+import utils.functions as F
+from elements.FAISSWrapper import FAISSWrapper
 import utils.CONST as C
-
-def wrapResponse(response):
-    """ Wrap the response between 2 XML tags to avoid a mix with the command line output/errors
-    Args:
-        response (_type_): response wrapped
-    """
-    print("<response>" + response + "</response>")
-
-def wrapTrace(response):
-    print("<log>" + response + "</log>")
 
 if __name__ == "__main__":
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument("-prompt", help="Prompt to send to LLAMA2", required=True)
-        parser.add_argument("-pdf", help="PDF file path", required=True)
-        parser.add_argument("-temperature", help="LLM Temperature", required=False, type=float, default=0.9) # float(self.temperature.replace(",", "."))
-        parser.add_argument("-chunk_size", help="Chunk Size", required=False, type=int, default=500)
-        parser.add_argument("-chunk_overlap", help="Chunk Overlap", required=False, type=int, default=50)
-        parser.add_argument("-nearest", help="Faiss Number of nearest to gather for prompting", required=False, type=int, default=3)
-        parser.add_argument("-separator", help="Separator", required=False, default=".")
-        parser.add_argument("-model", help="Ollama Model installed", required=False, default="tinydolphin")
-        parser.add_argument("-urlbase", help="URL for Ollama API (default localhost)", required=False, default="http://localhost:11434/api")
+        parser.add_argument("-" + C.ARG_PROMPT[0], help=C.ARG_PROMPT[1], required=True)
+        parser.add_argument("-" + C.ARG_PDFFILE[0], help=C.ARG_PDFFILE[1], required=True)
+        parser.add_argument("-" + C.ARG_TEMP[0], help=C.ARG_TEMP[1], required=False, type=float, default=0.9) # float(self.temperature.replace(",", "."))
+        parser.add_argument("-" + C.ARG_CHUNKSIZE[0], help=C.ARG_CHUNKSIZE[1], required=False, type=int, default=500)
+        parser.add_argument("-" + C.ARG_CHUNKOVAP[0], help=C.ARG_CHUNKOVAP[1], required=False, type=int, default=50)
+        parser.add_argument("-" + C.ARG_SEP[0], help=C.ARG_SEP[1], required=False, default=".")
+        parser.add_argument("-" + C.ARG_NEAREST[0], help=C.ARG_NEAREST[1], required=False, type=int, default=3)
+        parser.add_argument("-" + C.ARG_MODEL[0], help=C.ARG_MODEL[1], required=False, default="tinydolphin")
+        parser.add_argument("-" + C.ARG_URL[0], help=C.ARG_URL[1], required=False, default="http://localhost:11434/api")
         args = vars(parser.parse_args())
         myTrace = traceOut(args)
         myTrace.start()
 
         # 1 - Read the pdf content
-        pdf = functions.readPDF(myTrace, args["pdf"])
+        pdf = F.readPDF(myTrace, args[C.ARG_PDFFILE[0]])
         # 2 - Chunk document
-        nb, chunks = functions.chunkContent(myTrace, pdf, args["separator"], args["chunk_size"], args["chunk_overlap"])
+        nb, chunks = F.chunkContent(myTrace, pdf, args[C.ARG_SEP[0]], args[C.ARG_CHUNKSIZE[0]], args[C.ARG_CHUNKOVAP[0]])
         # 3 - Text embeddings
         embFactory = embeddingsFactory()
-        vPrompt = functions.textEmbeddings(myTrace, embFactory, args["prompt"])
+        vPrompt = F.textEmbeddings(myTrace, embFactory, args[C.ARG_PROMPT[0]])
         # 4 - Chunks embeddings
-        vChunks = functions.chunkEmbeddings(myTrace, embFactory, chunks)
+        vChunks = F.chunkEmbeddings(myTrace, embFactory, chunks)
         # 5 - Index the chunks
-        myfaiss = similaritySearchEngine()
-        functions.FAISSaddToIndex(myTrace, myfaiss, vChunks)
+        myfaiss = FAISSWrapper()
+        F.FAISSaddToIndex(myTrace, myfaiss, vChunks)
         # 6 - Similarity Search
-        similars = functions.FAISSSearch(myTrace, myfaiss, args["nearest"], vPrompt)
+        similars = F.FAISSSearch(myTrace, myfaiss, args[C.ARG_NEAREST[0]], vPrompt)
         # 7 - Build prompt
-        customPrompt = functions.buildPrompt(myTrace, args["prompt"], similars["text"])
+        customPrompt = F.buildPrompt(myTrace, args[C.ARG_PROMPT[0]], similars["text"])
         # 8 - Ask to the LLM ...
-        resp = functions.promptLLM(myTrace, customPrompt, args["urlbase"], args["model"], args["temperature"])
+        resp = F.promptLLM(myTrace, customPrompt, args[C.ARG_URL[0]], args[C.ARG_MODEL[0]], args[C.ARG_TEMP[0]])
     
         myTrace.stop()
-        wrapTrace(myTrace.getFullJSON())
-        wrapResponse(resp)
+        F.wrapTrace(myTrace.getFullJSON())
+        F.wrapResponse(resp)
         
     except Exception as e:
-        wrapResponse(C.OUT_ERROR)
-        wrapTrace(str(e))
+        F.wrapResponse(C.OUT_ERROR)
+        F.wrapTrace(str(e))

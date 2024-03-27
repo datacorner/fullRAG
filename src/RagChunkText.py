@@ -1,47 +1,42 @@
 import argparse
 from utils.traceOut import traceOut
-import utils.functions as functions
+import utils.functions as F
 import utils.CONST as C
 from elements.document import document
-
-def wrapResponse(response):
-    """ Wrap the response between 2 XML tags to avoid a mix with the command line output/errors
-    Args:
-        response (_type_): response wrapped
-    """
-    print("<response>" + response + "</response>")
-
-def wrapTrace(response):
-    print("<log>" + response + "</log>")
 
 if __name__ == "__main__":
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument("-txt", help="Input Text file path", required=True)
-        parser.add_argument("-out", help="Output JSON file path for the chunks", required=True)
-        parser.add_argument("-chunk_size", help="Chunk Size", required=False, type=int, default=500)
-        parser.add_argument("-chunk_overlap", help="Chunk Overlap", required=False, type=int, default=50)
-        parser.add_argument("-separator", help="Separator", required=False, default=".")
+        parser.add_argument("-" + C.ARG_TXTFILE[0], help=C.ARG_TXTFILE[1], required=True)
+        parser.add_argument("-" + C.ARG_CHUNKS[0], help=C.ARG_CHUNKS[1], required=True)
+        parser.add_argument("-" + C.ARG_CHUNKSIZE[0], help=C.ARG_CHUNKSIZE[1], required=False, type=int, default=500)
+        parser.add_argument("-" + C.ARG_CHUNKOVAP[0], help=C.ARG_CHUNKOVAP[1], required=False, type=int, default=50)
+        parser.add_argument("-" + C.ARG_SEP[0], help=C.ARG_SEP[1], required=False, default=".")
         args = vars(parser.parse_args())
         myTrace = traceOut(args)
         myTrace.start()
 
         # Read the Text file first
         nb = -1
-        doc = document(args["txt"])
+        doc = document(args[C.ARG_TXTFILE[0]])
         
         # Document chunking
         if (doc.getContentFromTXT()):
-            nb, chunks = functions.chunkContent(myTrace, doc, args["separator"], args["chunk_size"], args["chunk_overlap"])
+            nb, chunks = F.chunkContent(myTrace, 
+                                        doc, 
+                                        args[C.ARG_SEP[0]], 
+                                        args[C.ARG_CHUNKSIZE[0]], 
+                                        args[C.ARG_CHUNKOVAP[0]])
     
         # Write the json in a file 
-        if (not functions.writeJsonToFile(args["out"], chunks)):
+        if (not F.writeJsonToFile(args[C.ARG_CHUNKS[0]], 
+                                  chunks)):
             raise Exception("Impossible to write the chunks in a file")
 
         myTrace.stop()
-        wrapTrace(myTrace.getFullJSON())
-        wrapResponse(str(nb))
+        F.wrapTrace(myTrace.getFullJSON())
+        F.wrapResponse(str(nb))
         
     except Exception as e:
-        wrapResponse(C.OUT_ERROR)
-        wrapTrace(str(e))
+        F.wrapResponse(C.OUT_ERROR)
+        F.wrapTrace(str(e))

@@ -1,51 +1,41 @@
 import argparse
 from elements.embeddingsFactory import embeddingsFactory
 from utils.traceOut import traceOut
-import utils.functions as functions
-from elements.similaritySearchEngine import similaritySearchEngine
+import utils.functions as F
+from elements.FAISSWrapper import FAISSWrapper
 import utils.CONST as C
-
-def wrapResponse(response):
-    """ Wrap the response between 2 XML tags to avoid a mix with the command line output/errors
-    Args:
-        response (_type_): response wrapped
-    """
-    print("<response>" + response + "</response>")
-
-def wrapTrace(response):
-    print("<log>" + response + "</log>")
 
 if __name__ == "__main__":
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument("-prompt", help="Prompt to send to LLAMA2", required=True)
-        parser.add_argument("-temperature", help="LLM Temperature", required=False, type=float, default=0.9) # float(self.temperature.replace(",", "."))
-        parser.add_argument("-nearest", help="Faiss Number of nearest to gather for prompting", required=False, type=int, default=3)
-        parser.add_argument("-model", help="Ollama Model installed", required=False, default="tinydolphin")
-        parser.add_argument("-urlbase", help="URL for Ollama API (default localhost)", required=False, default="http://localhost:11434/api")
-        parser.add_argument("-faissname", help="FAISS Index reference", required=True)
-        parser.add_argument("-path", help="Path to the FAISS Index", required=True)
+        parser.add_argument("-" + C.ARG_PROMPT[0], help=C.ARG_PROMPT[1], required=True)
+        parser.add_argument("-" + C.ARG_TEMP[0], help=C.ARG_TEMP[1], required=False, type=float, default=0.9)
+        parser.add_argument("-" + C.ARG_NEAREST[0], help=C.ARG_NEAREST[1], required=False, type=int, default=3)
+        parser.add_argument("-" + C.ARG_MODEL[0], help=C.ARG_MODEL[1], required=False, default="tinydolphin")
+        parser.add_argument("-" + C.ARG_URL[0], help=C.ARG_URL[1], required=False, default="http://localhost:11434/api")
+        parser.add_argument("-" + C.ARG_FAISSNAME[0], help=C.ARG_FAISSNAME[1], required=True)
+        parser.add_argument("-" + C.ARG_FAISSPATH[0], help=C.ARG_FAISSPATH[1], required=True)
         args = vars(parser.parse_args())
         myTrace = traceOut(args)
         myTrace.start()
 
         # 1 - Text embeddings
         embFactory = embeddingsFactory()
-        vPrompt = functions.textEmbeddings(myTrace, embFactory, args["prompt"])
+        vPrompt = F.textEmbeddings(myTrace, embFactory, args[C.ARG_PROMPT[0]])
         # 2 - Load the existing index
-        myfaiss = similaritySearchEngine()
-        functions.FAISSLoad(myTrace, myfaiss, args["path"], args["faissname"])
+        myfaiss = FAISSWrapper()
+        F.FAISSLoad(myTrace, myfaiss, args[C.ARG_FAISSPATH[0]], args[C.ARG_FAISSNAME[0]])
         # 3 - Similarity Search
-        similars = functions.FAISSSearch(myTrace, myfaiss, args["nearest"], vPrompt)
+        similars = F.FAISSSearch(myTrace, myfaiss, args[C.ARG_NEAREST[0]], vPrompt)
         # 4 - Build prompt
-        customPrompt = functions.buildPrompt(myTrace, args["prompt"], similars["text"])
+        customPrompt = F.buildPrompt(myTrace, args[C.ARG_PROMPT[0]], similars["text"])
         # 5 - Ask to the LLM ...
-        resp = functions.promptLLM(myTrace, customPrompt, args["urlbase"], args["model"], args["temperature"])
+        resp = F.promptLLM(myTrace, customPrompt, args[C.ARG_URL[0]], args[C.ARG_MODEL[0]], args[C.ARG_TEMP[0]])
 
         myTrace.stop()
-        wrapTrace(myTrace.getFullJSON())
-        wrapResponse(resp)
+        F.wrapTrace(myTrace.getFullJSON())
+        F.wrapResponse(resp)
         
     except Exception as e:
-        wrapResponse(C.OUT_ERROR)
-        wrapTrace(str(e))
+        F.wrapResponse(C.OUT_ERROR)
+        F.wrapTrace(str(e))

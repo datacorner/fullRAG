@@ -7,7 +7,7 @@ import os
 """ 
     Leverage Meta FAISS
 """
-class similaritySearchEngine:
+class FAISSWrapper:
     def __init__(self):
         self.index = None   # FAISS Index
         self.dfContent = pd.DataFrame(columns = ["text", "embedding"]) # real data that are indexed
@@ -91,7 +91,8 @@ class similaritySearchEngine:
             DataFrame: List of the most nearest neighbors
         """
         # Get prompt vector only and normalize it
-        vector = self.__prepareEmbeddings([ prompt[0]["embedding"] ])
+        idx = "0" if type(list(prompt.keys())[0] == "str") else 0
+        vector = self.__prepareEmbeddings([ prompt[idx]["embedding"] ])
         # process the Similarity search
         k = self.index.ntotal
         distances, ann = self.index.search(vector, k=k)
