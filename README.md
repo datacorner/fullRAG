@@ -15,9 +15,9 @@ pip install -r requirements.txt
 
 ## Build setup
 1) build/Modify the *.toml file
-2) run py -m build
+2) run $ py -m build
 3) deploy / pyPI 
-    twine upload --verbose dist/fullRAG-0.x.x-py3-none-any.whl
+    $ twine upload --verbose dist/fullRAG-0.x.x-py3-none-any.whl
 
 # CLI examples
-RagQueryDoc -prompt "How many jobs Joe Biden wants to create ?" -pdf "data/Following is a transcript of President Biden.pdf"
+RagQueryDoc -prompt "How many jobs Joe Biden wants to create ?" -pdf "C:\Git\fullRAG\data\Following is a transcript of President Biden.pdf"

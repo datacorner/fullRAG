@@ -91,7 +91,7 @@ class FAISSWrapper:
             DataFrame: List of the most nearest neighbors
         """
         # Get prompt vector only and normalize it
-        idx = "0" if type(list(prompt.keys())[0] == "str") else 0
+        idx = "0" if type(list(prompt.keys())[0]) == "str" else 0
         vector = self.__prepareEmbeddings([ prompt[idx]["embedding"] ])
         # process the Similarity search
         k = self.index.ntotal

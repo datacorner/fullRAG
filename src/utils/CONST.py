@@ -9,6 +9,8 @@ TAG_O_RESPONSE = "<response>"
 TAG_C_RESPONSE = "</response>"
 TAG_O_LOG = "<log>"
 TAG_C_LOG = "</log>"
+TAG_O_ERROR = "<error>"
+TAG_C_ERROR = "</error>"
 
 # Command line arguments
 ARG_PROMPT = ["prompt", "Prompt to send to the LLM"]

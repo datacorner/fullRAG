@@ -10,6 +10,8 @@ def wrapResponse(response):
     print(C.TAG_O_RESPONSE + response + C.TAG_C_RESPONSE)
 def wrapTrace(response):
     print(C.TAG_O_LOG + response + C.TAG_C_LOG)
+def wrapError(response):
+    print(C.TAG_O_LOG + response + C.TAG_C_LOG)
 
 def readPDF(trace, pdffile):
     # Read the pdf content
