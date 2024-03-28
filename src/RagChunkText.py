@@ -5,6 +5,7 @@ import utils.CONST as C
 from elements.document import document
 
 def main():
+    myTrace = traceOut()
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument("-" + C.ARG_TXTFILE[0], help=C.ARG_TXTFILE[1], required=True)
@@ -13,7 +14,7 @@ def main():
         parser.add_argument("-" + C.ARG_CHUNKOVAP[0], help=C.ARG_CHUNKOVAP[1], required=False, type=int, default=50)
         parser.add_argument("-" + C.ARG_SEP[0], help=C.ARG_SEP[1], required=False, default=".")
         args = vars(parser.parse_args())
-        myTrace = traceOut(args)
+        myTrace.initialize(args)
         myTrace.start()
 
         # Read the Text file first
@@ -36,10 +37,13 @@ def main():
         myTrace.stop()
         F.wrapTrace(myTrace.getFullJSON())
         F.wrapResponse(str(nb))
-        
+        F.wrapStatusOK()
+
     except Exception as e:
         F.wrapResponse(C.OUT_ERROR)
-        F.wrapTrace(str(e))
-
+        F.wrapError(str(e))
+        F.wrapTrace(myTrace.getFullJSON())
+        F.wrapStatusERROR()
+        
 if __name__ == "__main__":
     main()

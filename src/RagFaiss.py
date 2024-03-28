@@ -5,6 +5,7 @@ import utils.CONST as C
 from elements.FAISSWrapper import FAISSWrapper
 
 def main():
+    myTrace = traceOut()
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument("-" + C.ARG_FAISSACTION[0], help=C.ARG_FAISSACTION[1], required=False)
@@ -15,7 +16,7 @@ def main():
         parser.add_argument("-" + C.ARG_FAISSPATH[0], help=C.ARG_FAISSPATH[1], required=False)
         parser.add_argument("-" + C.ARG_CHUNKS[0], help=C.ARG_CHUNKS[1], required=False)
         args = vars(parser.parse_args())
-        myTrace = traceOut(args)
+        myTrace.initialize(args)
         myTrace.start()
 
         myfaiss = FAISSWrapper()
@@ -45,10 +46,13 @@ def main():
         myTrace.stop()
         F.wrapTrace(myTrace.getFullJSON())
         F.wrapResponse(C.OUT_SUCCESS)
-        
+        F.wrapStatusOK()
+
     except Exception as e:
         F.wrapResponse(C.OUT_ERROR)
-        F.wrapTrace(str(e))
-
+        F.wrapError(str(e))
+        F.wrapTrace(myTrace.getFullJSON())
+        F.wrapStatusERROR()
+        
 if __name__ == "__main__":
     main()

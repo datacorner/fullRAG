@@ -5,7 +5,7 @@ import utils.functions as F
 import utils.CONST as C
 
 def main():
-    myTrace = traceOut(args)
+    myTrace = traceOut()
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument("-" + C.ARG_PDFFILE[0], help=C.ARG_PDFFILE[1], required=True)
@@ -15,6 +15,7 @@ def main():
         parser.add_argument("-" + C.ARG_CHUNKOVAP[0], help=C.ARG_CHUNKOVAP[1], required=False, type=int, default=50)
         parser.add_argument("-" + C.ARG_SEP[0], help=C.ARG_SEP[1], required=False, default=".")
         args = vars(parser.parse_args())
+        myTrace.initialize(args)
         myTrace.start()
 
         # 1 - Read the pdf content
@@ -30,11 +31,13 @@ def main():
         myTrace.stop()
         F.wrapTrace(myTrace.getFullJSON())
         F.wrapResponse(C.OUT_SUCCESS)
-        
+        F.wrapStatusOK()
+
     except Exception as e:
-        F.wrapError(str(e))
         F.wrapResponse(C.OUT_ERROR)
+        F.wrapError(str(e))
         F.wrapTrace(myTrace.getFullJSON())
+        F.wrapStatusERROR()
         
 if __name__ == "__main__":
     main()

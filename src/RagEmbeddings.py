@@ -11,13 +11,14 @@ def getArg(arg, name):
         return C.NULLSTRING
 
 def main():
+    myTrace = traceOut()
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument("-" + C.ARG_CHUNKS[0], help=C.ARG_CHUNKS[1], required=False, default=C.NULLSTRING)
         parser.add_argument("-" + C.ARG_PROMPT[0], help=C.ARG_PROMPT[1], required=False, default=C.NULLSTRING)
         parser.add_argument("-" + C.ARG_EMBEDDINGS[0], help=C.ARG_EMBEDDINGS[1], required=True)
         args = vars(parser.parse_args())
-        myTrace = traceOut(args)
+        myTrace.initialize(args)
         myTrace.start()
 
         # We must have a lit of chunks or a prompt, otherwise -> Exception
@@ -47,10 +48,13 @@ def main():
         myTrace.stop()
         F.wrapTrace(myTrace.getFullJSON())
         F.wrapResponse(C.OUT_SUCCESS)
-        
+        F.wrapStatusOK()
+
     except Exception as e:
         F.wrapResponse(C.OUT_ERROR)
-        F.wrapTrace(str(e))
-
+        F.wrapError(str(e))
+        F.wrapTrace(myTrace.getFullJSON())
+        F.wrapStatusERROR()
+        
 if __name__ == "__main__":
     main()

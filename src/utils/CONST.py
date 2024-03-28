@@ -11,6 +11,8 @@ TAG_O_LOG = "<log>"
 TAG_C_LOG = "</log>"
 TAG_O_ERROR = "<error>"
 TAG_C_ERROR = "</error>"
+TAG_O_STATUS = "<status>"
+TAG_C_STATUS = "</status>"
 
 # Command line arguments
 ARG_PROMPT = ["prompt", "Prompt to send to the LLM"]

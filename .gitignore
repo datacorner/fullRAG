@@ -2,4 +2,4 @@
 __pycache__/*
 *.pyc
 __pycache__/*.pyc
-FullRag.egg-info/*
+*/FullRag.egg-info/*

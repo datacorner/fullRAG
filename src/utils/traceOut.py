@@ -3,7 +3,7 @@ from datetime import timedelta, datetime
 import json
 
 class traceOut:
-    def __init__(self, args):
+    def __init__(self):
         self.perfCounter = None
         self.startTime = None
         self.stopTime = None
@@ -11,6 +11,8 @@ class traceOut:
         self.traceHeader = {}
         self.stepIdx = 1
         self.traceHeader = {}
+
+    def initialize(self, args):
         for arg in args.keys():
             self.traceHeader[arg] = args[arg]
 
@@ -45,6 +47,6 @@ class traceOut:
         fullJson["parameters"] = self.traceHeader
         fullJson["steps"] = self.traceSteps
         fullJson["start"] = str(self.startTime)
-        fullJson["stop"] = str(self.stopTime)
+        fullJson["stop"] = str(self.stopTime) if self.stopTime != None else datetime.now()
         fullJson["duration"] = str(self.stopTime - self.startTime)
         return json.dumps(fullJson)

@@ -6,12 +6,17 @@ import json
 import utils.CONST as C
 from numpyencoder import NumpyEncoder
 
+# Output printing via XML tags
 def wrapResponse(response):
     print(C.TAG_O_RESPONSE + response + C.TAG_C_RESPONSE)
 def wrapTrace(response):
     print(C.TAG_O_LOG + response + C.TAG_C_LOG)
 def wrapError(response):
     print(C.TAG_O_LOG + response + C.TAG_C_LOG)
+def wrapStatusOK():
+    print(C.TAG_O_STATUS + C.OUT_SUCCESS + C.TAG_C_STATUS)
+def wrapStatusERROR():
+    print(C.TAG_O_STATUS + C.OUT_ERROR + C.TAG_C_STATUS)
 
 def readPDF(trace, pdffile):
     # Read the pdf content

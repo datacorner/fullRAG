@@ -79,6 +79,14 @@
                        "-embprompt", "data/emb_prompt.json",
                        "-embchunks", "data/emb_chunks.json",
                        "-chunks", "data/nearest.json"]
+        },
+        {
+            "name": "LLM Only",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/RagLLM.py",
+            "console": "integratedTerminal",
+            "args":  [ "-prompt", "Do you know pytorch ?"]
         }
     ]
 }
