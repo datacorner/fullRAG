@@ -1,6 +1,6 @@
 [project]
 name = "FullRag"
-version = "0.1.1"
+version = "0.1.2"
 authors = [
   { name="Benoit Cayla", email="benoit@datacorner.fr" },
 ]
@@ -28,9 +28,9 @@ dependencies = [
 ]
 
 [project.scripts]
-RagQueryDoc = "RagQueryDoc:main"
+RagAdhocQueryDoc = "RagAdhocQueryDoc:main"
 RagQueryIndex = "RagQueryIndex:main"
-RagStoreDoc = "RagStoreDoc:main"
+RagQueryFaiss = "RagQueryFaiss:main"
 RagChunkText = "RagChunkText:main"
 RagEmbeddings = "RagEmbeddings:main"
 RagFaiss = "RagFaiss:main"
